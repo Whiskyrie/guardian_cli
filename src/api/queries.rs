@@ -54,16 +54,11 @@ query($userId: ID, $action: String, $resource: String, $result: String, $recentH
                 id
                 action
                 resource
-                resourceId
                 result
                 createdAt
                 ipAddress
-                userAgent
-                failureReason
                 user {
-                    id
                     email
-                    displayName
                 }
             }
         }
@@ -75,9 +70,7 @@ query($userId: ID, $action: String, $resource: String, $result: String, $recentH
 
 pub const LOGIN_USER: &str = r#"
 mutation($email: String!, $password: String!) {
-    loginUser(email: $email, password: $password) {
-        success
-        message
+    loginUser(input: { email: $email, password: $password }) {
         token
         user {
             id
@@ -88,11 +81,6 @@ mutation($email: String!, $password: String!) {
             roles
             fullName
             displayName
-        }
-        errors {
-            message
-            code
-            field
         }
     }
 }
@@ -101,8 +89,6 @@ mutation($email: String!, $password: String!) {
 pub const REGISTER_USER: &str = r#"
 mutation($email: String!, $password: String!, $firstName: String!, $lastName: String!) {
     registerUser(input: { email: $email, password: $password, firstName: $firstName, lastName: $lastName }) {
-        success
-        message
         token
         user {
             id
@@ -114,20 +100,13 @@ mutation($email: String!, $password: String!, $firstName: String!, $lastName: St
             fullName
             displayName
         }
-        errors {
-            message
-            code
-            field
-        }
     }
 }
 "#;
 
 pub const REFRESH_TOKEN: &str = r#"
 mutation($token: String!) {
-    refreshToken(token: $token) {
-        success
-        message
+    refreshToken(input: { token: $token }) {
         token
         user {
             id
@@ -136,46 +115,29 @@ mutation($token: String!) {
             lastName
             displayName
         }
-        errors {
-            message
-            code
-            field
-        }
     }
 }
 "#;
 
 pub const LOGOUT_USER: &str = r#"
 mutation {
-    logoutUser {
-        success
+    logoutUser(input: {}) {
         message
-        errors {
-            message
-            code
-            field
-        }
     }
 }
 "#;
 
 pub const DELETE_USER: &str = r#"
 mutation($id: ID!) {
-    deleteUser(id: $id) {
-        success
+    deleteUser(input: { id: $id }) {
         message
-        errors {
-            message
-            code
-            field
-        }
     }
 }
 "#;
 
 pub const UPDATE_USER_ROLE: &str = r#"
 mutation($userId: ID!, $roleNames: [UserRoleEnum!]!) {
-    updateUserRole(userId: $userId, roleNames: $roleNames) {
+    updateUserRole(input: { userId: $userId, roleNames: $roleNames }) {
         user {
             id
             email
@@ -183,15 +145,13 @@ mutation($userId: ID!, $roleNames: [UserRoleEnum!]!) {
             lastName
             role
             roles
+            fullName
             displayName
+            lastLoginAt
+            createdAt
+            updatedAt
         }
-        success
         message
-        errors {
-            message
-            code
-            field
-        }
     }
 }
 "#;

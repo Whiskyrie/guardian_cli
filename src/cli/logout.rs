@@ -12,23 +12,12 @@ pub async fn run(format: &output::OutputFormat) -> Result<()> {
         .graphql_request(queries::LOGOUT_USER, None, Some(&token))
         .await?;
 
-    let payload = response.logout_user;
-
-    if payload.success {
-        Config::clear_token()?;
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Logged out"),
-            true,
-            format,
-        );
-    } else {
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Logout failed"),
-            false,
-            format,
-        );
-        output::print_errors(&payload.errors, format);
-    }
+    Config::clear_token()?;
+    output::print_message(
+        response.logout_user.message.as_deref().unwrap_or("Logged out"),
+        true,
+        format,
+    );
 
     Ok(())
 }

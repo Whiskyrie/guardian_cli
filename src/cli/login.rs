@@ -23,25 +23,14 @@ pub async fn run(email: &str, password: Option<&str>, format: &output::OutputFor
 
     let payload = response.login_user;
 
-    if payload.success {
-        if let Some(token) = &payload.token {
-            Config::save_token(token)?;
-        }
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Login successful"),
-            true,
-            format,
-        );
+    if let Some(token) = &payload.token {
+        Config::save_token(token)?;
+        output::print_message("Login successful", true, format);
         if let Some(user) = &payload.user {
             output::print_user(user, format);
         }
     } else {
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Login failed"),
-            false,
-            format,
-        );
-        output::print_errors(&payload.errors, format);
+        output::print_message("Login failed", false, format);
     }
 
     Ok(())

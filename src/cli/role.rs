@@ -24,14 +24,13 @@ pub async fn assign(
 
     let payload = response.update_user_role;
 
-    if payload.success {
-        output::print_message(&payload.message, true, format);
-        if let Some(user) = &payload.user {
-            output::print_user(user, format);
-        }
-    } else {
-        output::print_message(&payload.message, false, format);
-        output::print_errors(&payload.errors, format);
+    output::print_message(
+        payload.message.as_deref().unwrap_or("Role updated"),
+        true,
+        format,
+    );
+    if let Some(user) = &payload.user {
+        output::print_user(user, format);
     }
 
     Ok(())

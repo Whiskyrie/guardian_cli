@@ -56,14 +56,14 @@ pub fn print_user(user: &crate::api::models::User, format: &OutputFormat) {
             table.load_preset(comfy_table::presets::NOTHING);
             table.set_content_arrangement(comfy_table::ContentArrangement::Dynamic);
             table.add_rows(vec![
-                vec![Cell::new("ID"), Cell::new(&user.id)],
-                vec![Cell::new("Email"), Cell::new(&user.email)],
+                vec![Cell::new("ID"), Cell::new(user.id.as_deref().unwrap_or("-"))],
+                vec![Cell::new("Email"), Cell::new(user.email.as_deref().unwrap_or("-"))],
                 vec![Cell::new("Name"), Cell::new(user.full_name.as_deref().unwrap_or("-"))],
-                vec![Cell::new("Display"), Cell::new(&user.display_name)],
+                vec![Cell::new("Display"), Cell::new(user.display_name.as_deref().unwrap_or("-"))],
                 vec![Cell::new("Role"), Cell::new(user.role.as_deref().unwrap_or("-"))],
                 vec![Cell::new("Roles"), Cell::new(user.roles.as_ref().map(|r| r.join(", ")).as_deref().unwrap_or("-"))],
                 vec![Cell::new("Last Login"), Cell::new(user.last_login_at.as_deref().unwrap_or("never"))],
-                vec![Cell::new("Created"), Cell::new(&user.created_at)],
+                vec![Cell::new("Created"), Cell::new(user.created_at.as_deref().unwrap_or("-"))],
             ]);
             println!("{table}");
         }
@@ -87,8 +87,8 @@ pub fn print_users_list(users: &[crate::api::models::User], format: &OutputForma
             ]);
             for user in users {
                 table.add_row(vec![
-                    Cell::new(&user.id),
-                    Cell::new(&user.email),
+                    Cell::new(user.id.as_deref().unwrap_or("-")),
+                    Cell::new(user.email.as_deref().unwrap_or("-")),
                     Cell::new(user.full_name.as_deref().unwrap_or("-")),
                     Cell::new(user.role.as_deref().unwrap_or("-")),
                     Cell::new(user.last_login_at.as_deref().unwrap_or("never")),
@@ -120,22 +120,22 @@ pub fn print_audit_logs(logs: &[crate::api::models::AuditLog], format: &OutputFo
                 let user_display = log
                     .user
                     .as_ref()
-                    .map(|u| u.display_name.clone())
+                    .and_then(|u| u.display_name.clone())
                     .unwrap_or_else(|| "-".to_string());
-                let result_color = match log.result.as_str() {
+                let result_color = match log.result.as_deref().unwrap_or("") {
                     "success" => Color::Green,
                     "failure" => Color::Red,
                     "blocked" => Color::Yellow,
                     _ => Color::White,
                 };
                 table.add_row(vec![
-                    Cell::new(&log.id),
-                    Cell::new(&log.action),
-                    Cell::new(&log.resource),
-                    Cell::new(&log.result).fg(result_color),
+                    Cell::new(log.id.as_deref().unwrap_or("-")),
+                    Cell::new(log.action.as_deref().unwrap_or("-")),
+                    Cell::new(log.resource.as_deref().unwrap_or("-")),
+                    Cell::new(log.result.as_deref().unwrap_or("-")).fg(result_color),
                     Cell::new(&user_display),
                     Cell::new(log.ip_address.as_deref().unwrap_or("-")),
-                    Cell::new(&log.created_at),
+                    Cell::new(log.created_at.as_deref().unwrap_or("-")),
                 ]);
             }
             println!("{table}");

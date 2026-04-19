@@ -20,8 +20,10 @@ pub struct GraphqlError {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
-    pub id: String,
-    pub email: String,
+    #[serde(default)]
+    pub id: Option<String>,
+    #[serde(default)]
+    pub email: Option<String>,
     #[serde(rename = "firstName")]
     pub first_name: Option<String>,
     #[serde(rename = "lastName")]
@@ -31,13 +33,13 @@ pub struct User {
     #[serde(rename = "lastLoginAt")]
     pub last_login_at: Option<String>,
     #[serde(rename = "createdAt")]
-    pub created_at: String,
+    pub created_at: Option<String>,
     #[serde(rename = "updatedAt")]
-    pub updated_at: String,
+    pub updated_at: Option<String>,
     #[serde(rename = "fullName")]
     pub full_name: Option<String>,
     #[serde(rename = "displayName")]
-    pub display_name: String,
+    pub display_name: Option<String>,
 }
 
 // --- User Error ---
@@ -77,28 +79,20 @@ pub struct LogoutResponse {
 
 #[derive(Debug, Deserialize)]
 pub struct AuthPayload {
-    pub success: bool,
-    pub message: Option<String>,
     pub token: Option<String>,
     pub user: Option<User>,
-    pub errors: Vec<UserError>,
 }
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 pub struct RefreshPayload {
-    pub success: bool,
-    pub message: Option<String>,
     pub token: Option<String>,
     pub user: Option<User>,
-    pub errors: Vec<UserError>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct MessagePayload {
-    pub success: bool,
     pub message: Option<String>,
-    pub errors: Vec<UserError>,
 }
 
 // --- Current User ---
@@ -161,23 +155,25 @@ pub struct UpdateUserRoleResponse {
 #[derive(Debug, Deserialize)]
 pub struct UpdateRolePayload {
     pub user: Option<User>,
-    pub success: bool,
-    pub message: String,
-    pub errors: Vec<UserError>,
+    pub message: Option<String>,
 }
 
 // --- Audit Log ---
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AuditLog {
-    pub id: String,
-    pub action: String,
-    pub resource: String,
+    #[serde(default)]
+    pub id: Option<String>,
+    #[serde(default)]
+    pub action: Option<String>,
+    #[serde(default)]
+    pub resource: Option<String>,
     #[serde(rename = "resourceId")]
     pub resource_id: Option<String>,
-    pub result: String,
+    #[serde(default)]
+    pub result: Option<String>,
     #[serde(rename = "createdAt")]
-    pub created_at: String,
+    pub created_at: Option<String>,
     #[serde(rename = "ipAddress")]
     pub ip_address: Option<String>,
     #[serde(rename = "userAgent")]

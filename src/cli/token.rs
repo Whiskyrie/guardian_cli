@@ -16,22 +16,11 @@ pub async fn run(format: &output::OutputFormat) -> Result<()> {
 
     let payload = response.refresh_token;
 
-    if payload.success {
-        if let Some(new_token) = &payload.token {
-            Config::save_token(new_token)?;
-        }
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Token refreshed"),
-            true,
-            format,
-        );
+    if let Some(new_token) = &payload.token {
+        Config::save_token(new_token)?;
+        output::print_message("Token refreshed", true, format);
     } else {
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Token refresh failed"),
-            false,
-            format,
-        );
-        output::print_errors(&payload.errors, format);
+        output::print_message("Token refresh failed", false, format);
     }
 
     Ok(())

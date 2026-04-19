@@ -58,28 +58,21 @@ pub async fn create(
 
     let payload = response.register_user;
 
-    if payload.success {
-        output::print_message(
-            payload.message.as_deref().unwrap_or("User created"),
-            true,
-            format,
-        );
-        if let Some(user) = &payload.user {
-            output::print_user(user, format);
-        }
-    } else {
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Failed to create user"),
-            false,
-            format,
-        );
-        output::print_errors(&payload.errors, format);
+    if let Some(token) = &payload.token {
+        Config::save_token(token)?;
+    }
+    output::print_message("User created", true, format);
+    if let Some(user) = &payload.user {
+        output::print_user(user, format);
     }
 
     Ok(())
 }
 
-pub async fn delete(id: &str, format: &output::OutputFormat) -> Result<()> {
+pub async fn delete(
+    id: &str,
+    format: &output::OutputFormat,
+) -> Result<()> {
     let config = Config::load()?;
     let token = Config::load_token()?.ok_or_else(|| GuardianError::Auth("Not logged in".to_string()))?;
     let client = GuardianClient::with_token(config, &token)?;
@@ -90,22 +83,11 @@ pub async fn delete(id: &str, format: &output::OutputFormat) -> Result<()> {
         .graphql_request(queries::DELETE_USER, Some(variables), Some(&token))
         .await?;
 
-    let payload = response.delete_user;
-
-    if payload.success {
-        output::print_message(
-            payload.message.as_deref().unwrap_or("User deleted"),
-            true,
-            format,
-        );
-    } else {
-        output::print_message(
-            payload.message.as_deref().unwrap_or("Failed to delete user"),
-            false,
-            format,
-        );
-        output::print_errors(&payload.errors, format);
-    }
+    output::print_message(
+        response.delete_user.message.as_deref().unwrap_or("User deleted"),
+        true,
+        format,
+    );
 
     Ok(())
 }
