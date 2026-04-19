@@ -1,6 +1,6 @@
 # Guardian CLI
 
-Cliente de linha de comando para o [Guardian Auth](https://guardian.whiskyrie.com.br), o servico de autenticacao e autorizacao da Whiskyrie. Permite gerenciar usuarios, roles e logs de auditoria diretamente do terminal.
+Cliente de linha de comando para o [Guardian Auth](https://guardian.whiskyrie.com.br). Permite gerenciar usuarios, roles e logs de auditoria diretamente do terminal.
 
 ## Requisitos
 
